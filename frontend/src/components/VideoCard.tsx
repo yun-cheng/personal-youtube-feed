@@ -1,4 +1,3 @@
-import { useState, useRef, useEffect } from 'react'
 import type { VideoItem } from '../App'
 
 type Props = {
@@ -37,21 +36,11 @@ function timeAgo(iso: string): string {
 }
 
 export default function VideoCard({ video, isHovered, onHover, onChannelClick }: Props) {
-  const containerRef = useRef<HTMLDivElement>(null)
-
-  useEffect(() => {
-    if (!isHovered && containerRef.current) {
-      const iframes = containerRef.current.querySelectorAll('iframe')
-      iframes.forEach(el => el.remove())
-    }
-  }, [isHovered])
-
   const thumb = video.thumbnail_url?.replace('hqdefault', 'mqdefault') || ''
   const videoUrl = `https://www.youtube.com/watch?v=${video.youtube_id}`
 
   return (
     <div
-      ref={containerRef}
       className="relative cursor-pointer"
       onMouseEnter={() => onHover(video.youtube_id)}
       onMouseLeave={() => onHover(null)}
@@ -59,32 +48,32 @@ export default function VideoCard({ video, isHovered, onHover, onChannelClick }:
     >
       {/* Thumbnail area — swaps to video player on hover */}
       <div className="relative aspect-video rounded-xl overflow-hidden bg-[#272727]">
-        {isHovered ? (
-          <div
-            key={video.youtube_id + '-player'}
-            className="absolute inset-0 overflow-hidden"
-            style={{ marginBottom: '-80px' }}
-          >
-            <iframe
-              src={`https://www.youtube-nocookie.com/embed/${video.youtube_id}?autoplay=1&mute=1&controls=0&rel=0&loop=1&playlist=${video.youtube_id}&iv_load_policy=3&fs=0&disablekb=1&playsinline=1&cc_load_policy=0&modestbranding=1`}
-              className="absolute inset-0 w-full"
-              style={{ height: 'calc(100% + 80px)', top: '-80px', pointerEvents: 'none' }}
-              allow="autoplay; encrypted-media"
-              title={video.title}
-            />
-            {/* Overlay to block mouse events from reaching the iframe */}
-            <div className="absolute inset-0 z-10" />
-          </div>
-        ) : (
-          <div key={video.youtube_id + '-thumb'}>
-            <img
-              src={thumb}
-              alt={video.title}
-              className="w-full h-full object-cover"
-              loading="lazy"
-            />
-          </div>
-        )}
+        {/* Thumbnail — hidden while hovered */}
+        <div style={{ display: isHovered ? 'none' : 'block' }}>
+          <img
+            src={thumb}
+            alt={video.title}
+            className="w-full h-full object-cover"
+            loading="lazy"
+          />
+        </div>
+
+        {/* Player — always in DOM, hidden until hovered */}
+        <div
+          className="absolute inset-0 overflow-hidden"
+          style={{ display: isHovered ? 'block' : 'none', marginBottom: '-80px' }}
+        >
+          <iframe
+            src={`https://www.youtube-nocookie.com/embed/${video.youtube_id}?autoplay=1&mute=1&controls=0&rel=0&loop=1&playlist=${video.youtube_id}&iv_load_policy=3&fs=0&disablekb=1&playsinline=1&cc_load_policy=0&modestbranding=1`}
+            className="absolute inset-0 w-full"
+            style={{ height: 'calc(100% + 80px)', top: '-80px', pointerEvents: 'none' }}
+            allow="autoplay; encrypted-media"
+            title={video.title}
+          />
+          {/* Overlay to block mouse events from reaching the iframe */}
+          <div className="absolute inset-0 z-10" />
+        </div>
+
         {video.duration_seconds > 0 && (
           <div className="absolute bottom-1 right-1 bg-black/80 text-white text-xs px-1.5 py-0.5 rounded font-medium">
             {formatDuration(video.duration_seconds)}
