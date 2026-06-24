@@ -76,9 +76,9 @@ async def list_channels(
 @router.get("/{channel_id}/videos")
 async def channel_videos(
     channel_id: str,
-    window: str = Query(default="1w", description="Time window: 3d, 1w, 2w, 1m, ..."),
-    sort: str = Query(default="score", description="score | views | likes | like% | newest | oldest"),
-    time_mode: str = Query(default="narrow", description="narrow | wide"),
+    window: str = Query(default="3d", description="Time window: 3d, 1w, 2w, 1m, ..."),
+    sort: str = Query(default="likes", description="score | views | likes | like% | newest | oldest"),
+    time_mode: str = Query(default="wide", description="narrow | wide"),
     limit: int = Query(default=50, description="Max videos"),
     db: AsyncSession = Depends(get_db),
 ):

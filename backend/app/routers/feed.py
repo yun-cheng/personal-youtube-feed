@@ -22,7 +22,7 @@ async def get_db():
 @router.get("")
 async def get_feed(
     window: TimeWindow = Query(default=TimeWindow.ONE_WEEK, alias="window"),
-    sort: str = Query(default="score", description="score | views | newest | oldest"),
+    sort: str = Query(default="likes", description="score | views | newest | oldest"),
     group: str | None = Query(default=None),
     db: AsyncSession = Depends(get_db),
 ):

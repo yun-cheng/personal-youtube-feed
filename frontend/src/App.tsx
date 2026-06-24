@@ -53,9 +53,9 @@ function parseSearch(): { tags: string[]; window: string; sort: string; timeMode
   const rawSort = p.get('sort')
   return {
     tags: p.get('tags') ? p.get('tags')!.split(',').filter(Boolean) : [],
-    window: p.get('window') || '1d',
-    sort: rawSort || 'score',
-    timeMode: p.get('time_mode') || 'narrow',
+    window: p.get('window') || '3d',
+    sort: rawSort || 'likes',
+    timeMode: p.get('time_mode') || 'wide',
     channelsSort: rawSort || 'subs',
   }
 }
@@ -71,13 +71,13 @@ function buildPath(
 ): string {
   const params = new URLSearchParams()
   if (tags.length > 0) params.set('tags', tags.join(','))
-  if (window !== '1d') params.set('window', window)
+  if (window !== '3d') params.set('window', window)
   if (page === 'channels') {
     if (channelsSort !== 'subs') params.set('sort', channelsSort)
   } else {
-    if (sort !== 'score') params.set('sort', sort)
+    if (sort !== 'likes') params.set('sort', sort)
   }
-  if (timeMode !== 'narrow') params.set('time_mode', timeMode)
+  if (timeMode !== 'wide') params.set('time_mode', timeMode)
   const qs = params.toString()
 
   if (page === 'channels') return qs ? `/channels?${qs}` : '/channels'
@@ -112,8 +112,8 @@ export default function App() {
   // ── Channel page takeover state ──────────────────────
   const [channelControlsScrolledAway, setChannelControlsScrolledAway] = useState(false)
   const [channelWindow, setChannelWindow] = useState('1w')
-  const [channelSort, setChannelSort] = useState('score')
-  const [channelTimeMode, setChannelTimeMode] = useState('narrow')
+  const [channelSort, setChannelSort] = useState('likes')
+  const [channelTimeMode, setChannelTimeMode] = useState('wide')
 
   // ── URL sync ──────────────────────────────────────────
   // replaceState for reactive filter changes (tags, window, sort) — no new history entry
@@ -288,8 +288,8 @@ export default function App() {
     setSelectedChannelId(null)
     setPageRaw('feed')
     setWindow('1w')
-    setSort('score')
-    setTimeMode('narrow')
+    setSort('likes')
+    setTimeMode('wide')
   }
 
   function clearFilter() {

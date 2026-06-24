@@ -329,9 +329,9 @@ async def set_channel_tags(
 @router.get("/feed")
 async def feed_by_tags(
     tags: str = "",
-    window: str = "1w",
-    sort: str = Query(default="score", description="score | views | likes | like% | newest | oldest"),
-    time_mode: str = Query(default="narrow", description="narrow | wide"),
+    window: str = "3d",
+    sort: str = Query(default="likes", description="score | views | likes | like% | newest | oldest"),
+    time_mode: str = Query(default="wide", description="narrow | wide"),
     limit: int = 50,
     db: AsyncSession = Depends(get_db),
 ):
