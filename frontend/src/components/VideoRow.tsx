@@ -53,7 +53,7 @@ export default function VideoRow({ group, onChannelClick }: Props) {
       </div>
 
       {/* Video grid */}
-      <div className="grid grid-cols-[repeat(auto-fill,minmax(300px,1fr))] gap-x-4 gap-y-6">
+      <div className="grid grid-cols-[repeat(auto-fill,minmax(360px,1fr))] gap-x-4 gap-y-6">
         {visibleVideos.map((video) => (
           <VideoCard
             key={video.youtube_id}
