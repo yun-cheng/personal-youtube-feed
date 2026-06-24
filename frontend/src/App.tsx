@@ -109,6 +109,10 @@ export default function App() {
   const [channelsSort, setChannelsSort] = useState(initQ.channelsSort)
   const [refreshing, setRefreshing] = useState(false)
 
+  // ── Sidebar state ─────────────────────────────────────
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+
   // ── Channel page takeover state ──────────────────────
   const [channelControlsScrolledAway, setChannelControlsScrolledAway] = useState(false)
   const [channelWindow, setChannelWindow] = useState('1m')
@@ -294,17 +298,30 @@ export default function App() {
 
   return (
     <div className="flex h-screen overflow-hidden">
-      <Sidebar
-        tags={tags}
-        selectedTags={selectedTags}
-        onToggleTag={toggleTag}
-        page={page}
-        onPageChange={setPage}
-        onClearFilter={clearFilter}
-        onHome={refresh}
-      />
+      {/* Mobile backdrop — closes sidebar when clicking outside */}
+      {mobileMenuOpen && (
+        <div
+          className="fixed inset-0 z-30 bg-black/50 md:hidden"
+          onClick={() => setMobileMenuOpen(false)}
+        />
+      )}
 
-      <main className="flex-1 overflow-y-auto">
+      {/* Sidebar — fixed overlay on mobile, static on desktop */}
+      <div className={`${mobileMenuOpen ? 'fixed inset-y-0 left-0 z-40' : 'hidden'} md:relative md:flex md:z-auto`}>
+        <Sidebar
+          tags={tags}
+          selectedTags={selectedTags}
+          onToggleTag={toggleTag}
+          page={page}
+          onPageChange={setPage}
+          onClearFilter={clearFilter}
+          onHome={refresh}
+          collapsed={sidebarCollapsed}
+          onToggleCollapse={() => setSidebarCollapsed(prev => !prev)}
+        />
+      </div>
+
+      <main className="flex-1 overflow-y-auto min-w-0">
         <TopBar
           variant={page === 'channels' ? 'channels' : page === 'channel' ? 'channel' : 'feed'}
           window={window}
@@ -327,6 +344,7 @@ export default function App() {
           onTakeoverWindowChange={setChannelWindow}
           onTakeoverSortChange={setChannelSort}
           onTakeoverTimeModeChange={setChannelTimeMode}
+          onHamburger={() => setMobileMenuOpen(prev => !prev)}
         />
 
         {page === 'channel' && selectedChannelId ? (

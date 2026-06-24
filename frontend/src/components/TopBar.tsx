@@ -25,11 +25,27 @@ type Props = {
   onTakeoverWindowChange?: (w: string) => void
   onTakeoverSortChange?: (s: string) => void
   onTakeoverTimeModeChange?: (m: string) => void
+  onHamburger?: () => void
 }
 
-export default function TopBar({ variant, window, onWindowChange, sort, onSortChange, timeMode, onTimeModeChange, channelsSort, onChannelsSortChange, selectedTags, tags, onToggleTag, onClearFilter, hideControls, showTakeover, takeoverWindow, takeoverSort, takeoverTimeMode, onTakeoverWindowChange, onTakeoverSortChange, onTakeoverTimeModeChange }: Props) {
+export default function TopBar({ variant, window, onWindowChange, sort, onSortChange, timeMode, onTimeModeChange, channelsSort, onChannelsSortChange, selectedTags, tags, onToggleTag, onClearFilter, hideControls, showTakeover, takeoverWindow, takeoverSort, takeoverTimeMode, onTakeoverWindowChange, onTakeoverSortChange, onTakeoverTimeModeChange, onHamburger }: Props) {
   return (
     <header className="sticky top-0 z-20 bg-[#0f0f0f]">
+      {/* Mobile hamburger row — only visible on small screens */}
+      {onHamburger && (
+        <div className="flex items-center px-4 py-2 border-b border-[#272727] md:hidden">
+          <button
+            onClick={onHamburger}
+            className="text-[#aaa] hover:text-white transition-colors"
+            aria-label="Toggle menu"
+          >
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+          </button>
+        </div>
+      )}
+
       {/* Row 1: normal time + sort (shown on feed/channels, hidden on channel page) */}
       {!hideControls && (
         <div className="px-6 py-3 border-b border-[#272727]">
