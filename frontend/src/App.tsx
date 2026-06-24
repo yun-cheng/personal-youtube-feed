@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
 import Sidebar from './components/Sidebar'
 import TopBar from './components/TopBar'
+import TimeSortControls from './components/TimeSortControls'
 import VideoRow from './components/VideoRow'
 import ChannelsPage from './components/ChannelsPage'
 import ChannelPage from './components/ChannelPage'
@@ -96,6 +97,11 @@ export default function App() {
   const [window, setWindow] = useState(initQ.window)
   const [sort, setSort] = useState(initQ.sort)
   const [refreshing, setRefreshing] = useState(false)
+
+  // ── Channel page takeover state ──────────────────────
+  const [channelControlsScrolledAway, setChannelControlsScrolledAway] = useState(false)
+  const [channelWindow, setChannelWindow] = useState('1w')
+  const [channelSort, setChannelSort] = useState('score')
 
   // ── URL sync ──────────────────────────────────────────
   const syncUrl = useCallback(() => {
@@ -282,10 +288,31 @@ export default function App() {
           tags={tags}
           onToggleTag={toggleTag}
           onClearFilter={clearFilter}
+          hideControls={page === 'channel' && !channelControlsScrolledAway}
         />
 
+        {/* Takeover controls — shown in TopBar when channel page controls scroll away */}
+        {page === 'channel' && channelControlsScrolledAway && (
+          <div className="px-6 py-3 border-b border-[#272727]">
+            <TimeSortControls
+              window={channelWindow}
+              onWindowChange={setChannelWindow}
+              sort={channelSort}
+              onSortChange={setChannelSort}
+            />
+          </div>
+        )}
+
         {page === 'channel' && selectedChannelId ? (
-          <ChannelPage channelId={selectedChannelId} onBack={backToChannels} />
+          <ChannelPage
+            channelId={selectedChannelId}
+            onBack={backToChannels}
+            timeWindow={channelWindow}
+            onTimeWindowChange={setChannelWindow}
+            sort={channelSort}
+            onSortChange={setChannelSort}
+            onControlsScrolledAway={setChannelControlsScrolledAway}
+          />
         ) : page === 'feed' ? (
           <div className="px-6 py-4">
             {!feed ? (

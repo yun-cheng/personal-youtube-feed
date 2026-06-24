@@ -1,4 +1,6 @@
 import { useState, useEffect } from 'react'
+import { useInView } from 'react-intersection-observer'
+import TimeSortControls from './TimeSortControls'
 import type { VideoItem } from '../App'
 import VideoRow from './VideoRow'
 
@@ -22,25 +24,12 @@ type ChannelResponse = {
 type Props = {
   channelId: string
   onBack: () => void
+  timeWindow: string
+  onTimeWindowChange: (w: string) => void
+  sort: string
+  onSortChange: (s: string) => void
+  onControlsScrolledAway?: (scrolledAway: boolean) => void
 }
-
-const WINDOWS = [
-  { value: '1d', label: '1d' },
-  { value: '3d', label: '3d' },
-  { value: '1w', label: '1w' },
-  { value: '2w', label: '2w' },
-  { value: '1m', label: '1m' },
-  { value: '3m', label: '3m' },
-  { value: '6m', label: '6m' },
-  { value: '1y', label: '1y' },
-] as const
-
-const SORT_OPTIONS = [
-  { value: 'score', label: 'Score' },
-  { value: 'views', label: 'Views' },
-  { value: 'newest', label: 'Newest' },
-  { value: 'oldest', label: 'Oldest' },
-]
 
 function formatSubs(n: number): string {
   if (n >= 1_000_000) return (n / 1_000_000).toFixed(1) + 'M'
@@ -48,20 +37,25 @@ function formatSubs(n: number): string {
   return String(n)
 }
 
-export default function ChannelPage({ channelId, onBack }: Props) {
+export default function ChannelPage({ channelId, onBack, timeWindow, onTimeWindowChange, sort, onSortChange, onControlsScrolledAway }: Props) {
   const [data, setData] = useState<ChannelResponse | null>(null)
-  const [window, setWindow] = useState('1w')
-  const [sort, setSort] = useState('score')
   const [loading, setLoading] = useState(true)
+
+  // Sentinel: detect when page-level controls scroll out of view
+  const { ref: sentinelRef, inView } = useInView({ threshold: 0, initialInView: true })
+
+  useEffect(() => {
+    onControlsScrolledAway?.(!inView)
+  }, [inView, onControlsScrolledAway])
 
   useEffect(() => {
     fetchChannel()
-  }, [channelId, window, sort])
+  }, [channelId, timeWindow, sort])
 
   async function fetchChannel() {
     setLoading(true)
     try {
-      const params = new URLSearchParams({ window, sort })
+      const params = new URLSearchParams({ window: timeWindow, sort })
       const res = await fetch(`/api/channels/${channelId}/videos?${params}`)
       if (!res.ok) throw new Error('Not found')
       setData(await res.json())
@@ -140,43 +134,20 @@ export default function ChannelPage({ channelId, onBack }: Props) {
         </div>
       </div>
 
-      {/* Controls */}
-      <div className="flex items-center gap-4 mb-4">
-        {/* Time filter */}
-        <div className="flex items-center gap-1">
-          {WINDOWS.map((w) => (
-            <button
-              key={w.value}
-              onClick={() => setWindow(w.value)}
-              className={`px-2.5 py-1 text-xs rounded-full transition-colors ${
-                window === w.value
-                  ? 'bg-white text-black font-medium'
-                  : 'bg-[#272727] text-white hover:bg-[#3a3a3a]'
-              }`}
-            >
-              {w.label}
-            </button>
-          ))}
-        </div>
+      {/* Sentinel — when this scrolls off-screen, TopBar takes over */}
+      <div ref={sentinelRef} />
 
-        {/* Sort */}
-        <div className="flex gap-1 bg-[#1a1a1a] rounded-lg p-0.5">
-          {SORT_OPTIONS.map((opt) => (
-            <button
-              key={opt.value}
-              onClick={() => setSort(opt.value)}
-              className={`px-2 py-1 text-[11px] rounded-md transition-colors ${
-                sort === opt.value
-                  ? 'bg-[#272727] text-white font-medium'
-                  : 'text-[#555] hover:text-white'
-              }`}
-            >
-              {opt.label}
-            </button>
-          ))}
+      {/* Controls (page-level) */}
+      <div className="mb-4">
+        <div className="flex items-center">
+          <TimeSortControls
+            window={timeWindow}
+            onWindowChange={onTimeWindowChange}
+            sort={sort}
+            onSortChange={onSortChange}
+          />
+          <span className="text-xs text-[#555] ml-4">{data.total} videos</span>
         </div>
-
-        <span className="text-xs text-[#555] ml-auto">{data.total} videos</span>
       </div>
 
       {/* Video grid */}
