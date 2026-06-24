@@ -6,6 +6,8 @@ type Props = {
   onWindowChange: (w: string) => void
   sort: string
   onSortChange: (s: string) => void
+  timeMode: string
+  onTimeModeChange: (m: string) => void
   selectedTags: string[]
   tags: TagInfo[]
   onToggleTag: (tag: string) => void
@@ -16,11 +18,13 @@ type Props = {
   showTakeover?: boolean
   takeoverWindow?: string
   takeoverSort?: string
+  takeoverTimeMode?: string
   onTakeoverWindowChange?: (w: string) => void
   onTakeoverSortChange?: (s: string) => void
+  onTakeoverTimeModeChange?: (m: string) => void
 }
 
-export default function TopBar({ window, onWindowChange, sort, onSortChange, selectedTags, tags, onToggleTag, onClearFilter, hideControls, showTakeover, takeoverWindow, takeoverSort, onTakeoverWindowChange, onTakeoverSortChange }: Props) {
+export default function TopBar({ window, onWindowChange, sort, onSortChange, timeMode, onTimeModeChange, selectedTags, tags, onToggleTag, onClearFilter, hideControls, showTakeover, takeoverWindow, takeoverSort, takeoverTimeMode, onTakeoverWindowChange, onTakeoverSortChange, onTakeoverTimeModeChange }: Props) {
   return (
     <header className="sticky top-0 z-20 bg-[#0f0f0f]">
       {/* Row 1: normal time + sort (shown on feed/channels, hidden on channel page) */}
@@ -31,6 +35,8 @@ export default function TopBar({ window, onWindowChange, sort, onSortChange, sel
             onWindowChange={onWindowChange}
             sort={sort}
             onSortChange={onSortChange}
+            timeMode={timeMode}
+            onTimeModeChange={onTimeModeChange}
           />
         </div>
       )}
@@ -43,6 +49,8 @@ export default function TopBar({ window, onWindowChange, sort, onSortChange, sel
             onWindowChange={onTakeoverWindowChange}
             sort={takeoverSort}
             onSortChange={onTakeoverSortChange}
+            timeMode={takeoverTimeMode ?? 'narrow'}
+            onTimeModeChange={onTakeoverTimeModeChange ?? (() => {})}
           />
         </div>
       )}

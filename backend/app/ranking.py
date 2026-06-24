@@ -51,19 +51,16 @@ def score_video(view_count: int, published_at: datetime) -> float:
     return view_count / hours
 
 
-def filter_by_window(videos: list[Video], window: TimeWindow) -> list[Video]:
-    """Filter videos to the discrete time bucket for the given window.
+def filter_by_window(videos: list[Video], window: TimeWindow, time_mode: str = "narrow") -> list[Video]:
+    """Filter videos to the given time window.
 
-    Each window is a non-overlapping slice, e.g.:
-       3d = now–3d ago  (past 72h)
-       1w = 3d–7d ago   (rest of the week)
-       2w = 7d–14d ago  (last week)
-       …
+    narrow (default): discrete non-overlapping bucket, e.g. 3d = 1d–3d ago
+    wide: accumulated from 0, e.g. 3d = 0–3d ago (everything up to the upper bound)
     """
     now = datetime.now(timezone.utc)
     lower_offset, upper_offset = WINDOW_RANGES[window]
     lower = now - upper_offset  # older bound (inclusive)
-    upper = now - lower_offset  # newer bound (exclusive)
+    upper = now if time_mode == "wide" else now - lower_offset  # newer bound (exclusive)
 
     result = []
     for v in videos:
@@ -75,7 +72,7 @@ def filter_by_window(videos: list[Video], window: TimeWindow) -> list[Video]:
     return result
 
 
-def rank_videos(videos: list[Video], window: TimeWindow, channel_names: dict[str, str] | None = None, sort: str = "score") -> list[dict]:
+def rank_videos(videos: list[Video], window: TimeWindow, channel_names: dict[str, str] | None = None, sort: str = "score", time_mode: str = "narrow") -> list[dict]:
     """
     Rank videos filtered by time window, sorted by the given criteria.
 
@@ -90,7 +87,7 @@ def rank_videos(videos: list[Video], window: TimeWindow, channel_names: dict[str
     Returns list of dicts with score included.
     channel_names: optional dict of channel_id → channel_title.
     """
-    filtered = filter_by_window(videos, window)
+    filtered = filter_by_window(videos, window, time_mode)
     ranked = []
     for v in filtered:
         ranked.append({

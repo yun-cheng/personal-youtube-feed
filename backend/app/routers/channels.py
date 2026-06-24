@@ -78,6 +78,7 @@ async def channel_videos(
     channel_id: str,
     window: str = Query(default="1w", description="Time window: 3d, 1w, 2w, 1m, ..."),
     sort: str = Query(default="score", description="score | views | likes | like% | newest | oldest"),
+    time_mode: str = Query(default="narrow", description="narrow | wide"),
     limit: int = Query(default=50, description="Max videos"),
     db: AsyncSession = Depends(get_db),
 ):
@@ -107,7 +108,7 @@ async def channel_videos(
     )
     videos = list(vid_result.scalars().all())
 
-    ranked = rank_videos(videos, TimeWindow(window), {channel_id: channel.title}, sort=sort)
+    ranked = rank_videos(videos, TimeWindow(window), {channel_id: channel.title}, sort=sort, time_mode=time_mode)
 
     return {
         "channel": {
@@ -120,6 +121,7 @@ async def channel_videos(
         },
         "window": window,
         "sort": sort,
+        "time_mode": time_mode,
         "videos": ranked[:limit],
         "total": len(ranked),
     }

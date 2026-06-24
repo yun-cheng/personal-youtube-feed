@@ -331,6 +331,7 @@ async def feed_by_tags(
     tags: str = "",
     window: str = "1w",
     sort: str = Query(default="score", description="score | views | likes | like% | newest | oldest"),
+    time_mode: str = Query(default="narrow", description="narrow | wide"),
     limit: int = 50,
     db: AsyncSession = Depends(get_db),
 ):
@@ -364,10 +365,11 @@ async def feed_by_tags(
     chan_result = await db.execute(select(Channel.youtube_id, Channel.title))
     chan_titles = {r.youtube_id: r.title for r in chan_result}
 
-    ranked = rank_videos(list(all_videos), TimeWindow(window), chan_titles, sort=sort)
+    ranked = rank_videos(list(all_videos), TimeWindow(window), chan_titles, sort=sort, time_mode=time_mode)
     return {
         "window": window,
         "sort": sort,
+        "time_mode": time_mode,
         "tags": tag_list,
         "videos": ranked[:limit],
         "total": len(ranked),

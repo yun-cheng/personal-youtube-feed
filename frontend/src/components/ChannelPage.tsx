@@ -28,6 +28,8 @@ type Props = {
   onTimeWindowChange: (w: string) => void
   sort: string
   onSortChange: (s: string) => void
+  timeMode: string
+  onTimeModeChange: (m: string) => void
   onControlsScrolledAway?: (scrolledAway: boolean) => void
 }
 
@@ -37,7 +39,7 @@ function formatSubs(n: number): string {
   return String(n)
 }
 
-export default function ChannelPage({ channelId, onBack, timeWindow, onTimeWindowChange, sort, onSortChange, onControlsScrolledAway }: Props) {
+export default function ChannelPage({ channelId, onBack, timeWindow, onTimeWindowChange, sort, onSortChange, timeMode, onTimeModeChange, onControlsScrolledAway }: Props) {
   const [data, setData] = useState<ChannelResponse | null>(null)
   const [loading, setLoading] = useState(true)
 
@@ -50,12 +52,12 @@ export default function ChannelPage({ channelId, onBack, timeWindow, onTimeWindo
 
   useEffect(() => {
     fetchChannel()
-  }, [channelId, timeWindow, sort])
+  }, [channelId, timeWindow, sort, timeMode])
 
   async function fetchChannel() {
     setLoading(true)
     try {
-      const params = new URLSearchParams({ window: timeWindow, sort })
+      const params = new URLSearchParams({ window: timeWindow, sort, time_mode: timeMode })
       const res = await fetch(`/api/channels/${channelId}/videos?${params}`)
       if (!res.ok) throw new Error('Not found')
       setData(await res.json())
@@ -144,6 +146,8 @@ export default function ChannelPage({ channelId, onBack, timeWindow, onTimeWindo
           onWindowChange={onTimeWindowChange}
           sort={sort}
           onSortChange={onSortChange}
+          timeMode={timeMode}
+          onTimeModeChange={onTimeModeChange}
         />
       </div>
 
