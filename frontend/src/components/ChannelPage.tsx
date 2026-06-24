@@ -23,7 +23,6 @@ type ChannelResponse = {
 
 type Props = {
   channelId: string
-  onBack: () => void
   timeWindow: string
   onTimeWindowChange: (w: string) => void
   sort: string
@@ -39,7 +38,7 @@ function formatSubs(n: number): string {
   return String(n)
 }
 
-export default function ChannelPage({ channelId, onBack, timeWindow, onTimeWindowChange, sort, onSortChange, timeMode, onTimeModeChange, onControlsScrolledAway }: Props) {
+export default function ChannelPage({ channelId, timeWindow, onTimeWindowChange, sort, onSortChange, timeMode, onTimeModeChange, onControlsScrolledAway }: Props) {
   const [data, setData] = useState<ChannelResponse | null>(null)
   const [loading, setLoading] = useState(true)
 
@@ -88,17 +87,6 @@ export default function ChannelPage({ channelId, onBack, timeWindow, onTimeWindo
 
   return (
     <div className="px-6 py-4">
-      {/* Back button */}
-      <button
-        onClick={onBack}
-        className="flex items-center gap-1 text-sm text-[#777] hover:text-white mb-4 transition-colors"
-      >
-        <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-          <path d="M19 12H5M12 19l-7-7 7-7" strokeLinecap="round" strokeLinejoin="round"/>
-        </svg>
-        Back to channels
-      </button>
-
       {/* Channel header */}
       <div className="flex items-start gap-4 mb-6 pb-6 border-b border-[#272727]">
         <img

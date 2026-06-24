@@ -278,18 +278,6 @@ export default function App() {
     setChannelTimeMode('wide')
   }
 
-  function backToChannels() {
-    // Use history.back() to avoid pushing a duplicate /channels entry.
-    // Fall back to replaceState when there's no history to go back to.
-    if (history.length > 1) {
-      history.back()
-    } else {
-      history.replaceState(null, '', '/channels')
-      setSelectedChannelId(null)
-      setPageRaw('channels')
-    }
-  }
-
   function goHome() {
     history.pushState(null, '', '/')
     setSelectedTags([])
@@ -344,7 +332,6 @@ export default function App() {
         {page === 'channel' && selectedChannelId ? (
           <ChannelPage
             channelId={selectedChannelId}
-            onBack={backToChannels}
             timeWindow={channelWindow}
             onTimeWindowChange={setChannelWindow}
             sort={channelSort}
