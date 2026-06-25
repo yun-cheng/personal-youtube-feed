@@ -40,15 +40,21 @@ const YoutubeIcon = () => (
   </svg>
 )
 
-const FeedIcon = () => (
+const HamburgerIcon = () => (
   <svg className="w-5 h-5 flex-shrink-0" viewBox="0 0 24 24" fill="currentColor">
-    <path d="M4 5h4v4H4zm6 0h4v4h-4zm6 0h4v4h-4zM4 11h4v4H4zm6 0h4v4h-4zm6 0h4v4h-4zM4 17h4v4H4zm6 0h4v4h-4zm6 0h4v4h-4z"/>
+    <path d="M3 18h18v-2H3zm0-5h18v-2H3zm0-7v2h18V6z"/>
+  </svg>
+)
+
+const HomeIcon = () => (
+  <svg className="w-5 h-5 flex-shrink-0" viewBox="0 0 24 24" fill="currentColor">
+    <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
   </svg>
 )
 
 const ChannelsIcon = () => (
   <svg className="w-5 h-5 flex-shrink-0" viewBox="0 0 24 24" fill="currentColor">
-    <path d="M3 5h18v2H3zm0 6h18v2H3zm0 6h18v2H3z"/>
+    <path d="M21 3H3c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h5v2h8v-2h5c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 14H3V5h18v12z"/>
   </svg>
 )
 
@@ -67,9 +73,9 @@ export default function Sidebar({ tags, selectedTags, onToggleTag, page, onPageC
           {/* Expand toggle */}
           <button
             onClick={onToggleCollapse}
-            className="w-full flex justify-center py-2 text-xs text-[#555] hover:text-white transition-colors font-mono"
+            className="w-full flex justify-center py-2 text-[#555] hover:text-white transition-colors"
           >
-            {'>>'}
+            <HamburgerIcon />
           </button>
           {/* Home */}
           <button
@@ -85,9 +91,9 @@ export default function Sidebar({ tags, selectedTags, onToggleTag, page, onPageC
             className={`w-full flex justify-center py-2 transition-colors ${
               page === 'feed' ? 'text-white' : 'text-[#717171] hover:text-white'
             }`}
-            title="Feed"
+            title="Home"
           >
-            <FeedIcon />
+            <HomeIcon />
           </button>
           {/* Channels */}
           <button
@@ -117,9 +123,9 @@ export default function Sidebar({ tags, selectedTags, onToggleTag, page, onPageC
         </button>
         <button
           onClick={onToggleCollapse}
-          className="text-xs text-[#555] hover:text-white transition-colors px-1 py-1 font-mono"
+          className="text-[#555] hover:text-white transition-colors p-1"
         >
-          {'<<'}
+          <HamburgerIcon />
         </button>
       </div>
 
@@ -133,8 +139,8 @@ export default function Sidebar({ tags, selectedTags, onToggleTag, page, onPageC
               : 'text-[#aaa] hover:bg-[#1a1a1a] hover:text-white'
           }`}
         >
-          <FeedIcon />
-          Feed
+          <HomeIcon />
+          Home
         </button>
         <button
           onClick={() => onPageChange('channels')}
