@@ -53,12 +53,18 @@ export default function Sidebar({ tags, selectedTags, onToggleTag, page, onPageC
       {/* Logo + page pills */}
       <div className="border-b border-[#272727] px-4 py-4">
         {collapsed ? (
-          <div className="flex justify-center">
+          <div className="flex flex-col items-center gap-2">
             <button
               onClick={() => { onHome(); onPageChange('feed'); onClearFilter() }}
               className="hover:opacity-80 transition-opacity"
             >
               <YoutubeIcon />
+            </button>
+            <button
+              onClick={onToggleCollapse}
+              className="text-xs text-[#555] hover:text-white transition-colors px-2 py-0.5 font-mono"
+            >
+              {'>>'}
             </button>
           </div>
         ) : (
@@ -70,26 +76,34 @@ export default function Sidebar({ tags, selectedTags, onToggleTag, page, onPageC
               <YoutubeIcon />
               <span className="text-lg font-semibold tracking-tight">Home</span>
             </button>
-            <div className="flex gap-1 bg-[#1a1a1a] rounded-lg p-0.5">
+            <div className="flex items-center gap-2">
+              <div className="flex gap-1 bg-[#1a1a1a] rounded-lg p-0.5">
+                <button
+                  onClick={() => onPageChange('feed')}
+                  className={`px-2.5 py-1 text-xs rounded-md transition-colors ${
+                    page === 'feed'
+                      ? 'bg-[#272727] text-white font-medium'
+                      : 'text-[#888] hover:text-white'
+                  }`}
+                >
+                  Feed
+                </button>
+                <button
+                  onClick={() => onPageChange('channels')}
+                  className={`px-2.5 py-1 text-xs rounded-md transition-colors ${
+                    page === 'channels'
+                      ? 'bg-[#272727] text-white font-medium'
+                      : 'text-[#888] hover:text-white'
+                  }`}
+                >
+                  Channels
+                </button>
+              </div>
               <button
-                onClick={() => onPageChange('feed')}
-                className={`px-2.5 py-1 text-xs rounded-md transition-colors ${
-                  page === 'feed'
-                    ? 'bg-[#272727] text-white font-medium'
-                    : 'text-[#888] hover:text-white'
-                }`}
+                onClick={onToggleCollapse}
+                className="text-xs text-[#555] hover:text-white transition-colors px-1 py-1 font-mono"
               >
-                Feed
-              </button>
-              <button
-                onClick={() => onPageChange('channels')}
-                className={`px-2.5 py-1 text-xs rounded-md transition-colors ${
-                  page === 'channels'
-                    ? 'bg-[#272727] text-white font-medium'
-                    : 'text-[#888] hover:text-white'
-                }`}
-              >
-                Channels
+                {'<<'}
               </button>
             </div>
           </div>
@@ -136,15 +150,7 @@ export default function Sidebar({ tags, selectedTags, onToggleTag, page, onPageC
         </div>
       )}
 
-      {/* Collapse toggle */}
-      <div className={`border-t border-[#272727] p-2 flex ${collapsed ? 'justify-center' : 'justify-end'}`}>
-        <button
-          onClick={onToggleCollapse}
-          className="text-xs text-[#555] hover:text-white transition-colors px-2 py-1 font-mono"
-        >
-          {collapsed ? '>>' : '<<'}
-        </button>
-      </div>
+
     </aside>
   )
 }
