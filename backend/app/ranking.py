@@ -110,7 +110,7 @@ def rank_videos(videos: list[Video], window: TimeWindow, channel_names: dict[str
         ranked.sort(key=lambda x: x["view_count"], reverse=True)
     elif sort == "likes":
         ranked.sort(key=lambda x: x["like_count"], reverse=True)
-    elif sort == "like_pct" or sort == "like%":
+    elif sort == "like%":
         ranked.sort(key=lambda x: x["like_count"] / max(x["view_count"], 100) * 100, reverse=True)
     elif sort == "newest":
         ranked.sort(key=lambda x: x["published_at"], reverse=True)

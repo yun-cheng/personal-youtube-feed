@@ -7,7 +7,6 @@ All calls use yt-dlp's --dump-json mode, which bypasses YouTube Data API quota.
 from __future__ import annotations
 
 import json
-import subprocess
 from datetime import datetime, timezone
 from typing import Any
 

@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from 'react'
+import { useState, useEffect, useCallback, useRef, useMemo } from 'react'
 import Sidebar from './components/Sidebar'
 import TopBar from './components/TopBar'
 import VideoRow from './components/VideoRow'
@@ -100,11 +100,12 @@ const WINDOW_HOURS: Record<string, number> = {
 function filterWatchLater(videos: VideoItem[], win: string, timeMode: string): VideoItem[] {
   const hours = WINDOW_HOURS[win]
   if (!hours) return videos
-  const cutoff = Date.now() - hours * 3_600_000
+  const now = Date.now()
+  const cutoff = now - hours * 3_600_000
   if (timeMode === 'wide') return videos.filter(v => new Date(v.published_at).getTime() >= cutoff)
   return videos.filter(v => {
     const t = new Date(v.published_at).getTime()
-    return t >= Date.now() - hours * 3_600_000 && t <= Date.now()
+    return t >= cutoff && t <= now
   })
 }
 
@@ -150,7 +151,7 @@ export default function App() {
       return JSON.parse(localStorage.getItem('watch_later') || '[]')
     } catch { return [] }
   })
-  const watchLaterIds = new Set(watchLater.map(v => v.youtube_id))
+  const watchLaterIds = useMemo(() => new Set(watchLater.map(v => v.youtube_id)), [watchLater])
 
   function toggleWatchLater(video: VideoItem) {
     setWatchLater(prev => {
@@ -181,17 +182,12 @@ export default function App() {
   }, [])
 
   // Measure topbar height so <main> can pad below it when fixed on mobile.
-  const topbarHeightRef = useRef(0)
   const [topbarHeight, setTopbarHeight] = useState(0)
   useEffect(() => {
     const el = topbarRef.current
     if (!el) return
-    const ro = new ResizeObserver(() => {
-      topbarHeightRef.current = el.offsetHeight
-      setTopbarHeight(el.offsetHeight)
-    })
+    const ro = new ResizeObserver(() => setTopbarHeight(el.offsetHeight))
     ro.observe(el)
-    topbarHeightRef.current = el.offsetHeight
     setTopbarHeight(el.offsetHeight)
     return () => ro.disconnect()
   }, [])
@@ -253,8 +249,8 @@ export default function App() {
       mainRef.current?.scrollTo({ top: 0 })
       setTopbarPinned(true)
     }
-    addEventListener('popstate', onPop)
-    return () => removeEventListener('popstate', onPop)
+    window.addEventListener('popstate', onPop)
+    return () => window.removeEventListener('popstate', onPop)
   }, [])
 
   // ── Auto-refresh via Page Visibility API ────────────────
@@ -345,7 +341,7 @@ export default function App() {
       console.error('Failed to fetch feed:', e)
     }
     setLoading(false)
-  }, [window, sort, timeMode, selectedTags, tags])
+  }, [window, sort, timeMode, selectedTags])
 
   useEffect(() => {
     if (page === 'feed') fetchFeed()
@@ -414,7 +410,7 @@ export default function App() {
     setSelectedTags([])
     setSelectedChannelId(null)
     setPageRaw('feed')
-    setWindow('1w')
+    setWindow('3d')
     setSort('likes')
     setTimeMode('wide')
     mainRef.current?.scrollTo({ top: 0 })

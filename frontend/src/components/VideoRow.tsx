@@ -1,11 +1,9 @@
 import { useRef, useState, useEffect, useCallback } from 'react'
 import VideoCard from './VideoCard'
-import type { FeedGroup } from '../App'
+import type { FeedGroup, VideoItem } from '../App'
 
 const INITIAL_COUNT = 20
 const LOAD_MORE = 20
-
-import type { VideoItem } from '../App'
 
 type Props = {
   group: FeedGroup
