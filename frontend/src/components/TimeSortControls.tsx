@@ -69,7 +69,7 @@ export default function TimeSortControls({ variant = 'feed', window, onWindowCha
     <div className="flex flex-col gap-2 md:flex-row md:items-center md:gap-3">
       {/* Row 1 on mobile / left on desktop: time window buttons + narrow/wide toggle */}
       <div className="flex items-center gap-3 min-w-0">
-        <div className="flex gap-1 overflow-x-auto no-scrollbar flex-shrink-0">
+        <div className="flex gap-1 overflow-x-auto no-scrollbar flex-1 min-w-0">
           {WINDOWS.map((w, i) => {
             const selectedIdx = WINDOWS.findIndex((x) => x.value === window)
             const isSelected = timeMode === 'wide' ? i <= selectedIdx : window === w.value
@@ -90,7 +90,7 @@ export default function TimeSortControls({ variant = 'feed', window, onWindowCha
         </div>
 
         {/* Narrow / Wide mode toggle */}
-        <div className="flex items-center bg-[#1a1a1a] rounded-full p-0.5 text-xs">
+        <div className="flex items-center bg-[#1a1a1a] rounded-full p-0.5 text-xs flex-shrink-0">
           <button
             onClick={() => onTimeModeChange?.('narrow')}
             className={`px-2.5 py-1 rounded-full transition-colors ${
