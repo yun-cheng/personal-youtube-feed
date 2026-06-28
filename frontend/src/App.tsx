@@ -517,7 +517,16 @@ export default function App() {
             ) : (() => {
               let result = filterWatchLater(watchLater, timeWindow, timeMode)
               if (selectedTags.length > 0) {
-                const allowed = new Set(selectedTags.flatMap(t => [...(tagChannels.get(t) ?? [])]))
+                // Group selected tags by section, OR within group, AND across groups
+                const byGroup = new Map<string, string[]>()
+                for (const t of selectedTags) {
+                  const group = tags.find(x => x.name === t)?.group ?? '__ungrouped__'
+                  byGroup.set(group, [...(byGroup.get(group) ?? []), t])
+                }
+                const allowed = [...byGroup.values()].reduce<Set<string> | null>((acc, groupTags) => {
+                  const ids = new Set(groupTags.flatMap(t => [...(tagChannels.get(t) ?? [])]))
+                  return acc === null ? ids : new Set([...acc].filter(id => ids.has(id)))
+                }, null) ?? new Set()
                 result = result.filter(v => allowed.has(v.channel_id))
               }
               result = sortWatchLater(result, sort)

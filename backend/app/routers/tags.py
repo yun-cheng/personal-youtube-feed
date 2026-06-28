@@ -335,21 +335,36 @@ async def feed_by_tags(
     limit: int = 50,
     db: AsyncSession = Depends(get_db),
 ):
-    """Get ranked videos filtered by tags (AND logic, comma-separated)."""
+    """Get ranked videos filtered by tags.
+
+    Logic: OR within a tag group (section), AND across groups.
+    e.g. selecting coding+flutter (both 開發) AND piano (音樂) returns
+    channels tagged (coding OR flutter) AND piano.
+    """
     from app.ranking import TimeWindow, rank_videos
 
     tag_list = [t.strip() for t in tags.split(",") if t.strip()]
 
-    # Find channels matching all selected tags
     if tag_list:
-        # Channels that have ALL selected tags
-        stmt = select(ChannelTag.channel_id).where(
-            ChannelTag.tag_name.in_(tag_list)
-        ).group_by(ChannelTag.channel_id).having(
-            func.count(ChannelTag.tag_name) == len(tag_list)
-        )
-        result = await db.execute(stmt)
-        channel_ids = {r[0] for r in result}
+        # Group selected tags by their section (group field in config)
+        config = _load_tags_config()
+        tags_config = config.get("tags", {})
+        groups: dict[str, list[str]] = {}
+        for tag in tag_list:
+            group = tags_config.get(tag, {}).get("group", "__ungrouped__")
+            groups.setdefault(group, []).append(tag)
+
+        # For each group: union of channel IDs (OR within group)
+        # Then intersect across groups (AND across groups)
+        channel_ids: set[str] | None = None
+        for group_tags in groups.values():
+            stmt = select(ChannelTag.channel_id).where(
+                ChannelTag.tag_name.in_(group_tags)
+            ).distinct()
+            result = await db.execute(stmt)
+            group_channels = {r[0] for r in result}
+            channel_ids = group_channels if channel_ids is None else channel_ids & group_channels
+        channel_ids = channel_ids or set()
     else:
         result = await db.execute(select(Channel.youtube_id))
         channel_ids = {r[0] for r in result}
