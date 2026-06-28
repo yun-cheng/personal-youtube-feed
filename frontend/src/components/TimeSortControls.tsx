@@ -96,14 +96,22 @@ export default function TimeSortControls({ variant = 'feed', window, onWindowCha
           className="flex-shrink-0 w-7 h-7 flex items-center justify-center rounded-full bg-[#1a1a1a] hover:bg-[#272727] transition-colors text-[#aaa] hover:text-white"
         >
           {timeMode === 'wide' ? (
-            /* Wide: outward arrows — viewing a cumulative range */
-            <svg className="w-3.5 h-3.5" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round">
-              <path d="M2 8h4M10 8h4M2 5l-1.5 3L2 11M14 5l1.5 3L14 11"/>
+            /* Wide: arrows pointing outward from center bar */
+            <svg className="w-3.5 h-3.5" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round">
+              <line x1="8" y1="2.5" x2="8" y2="13.5"/>
+              <line x1="1.5" y1="8" x2="6.5" y2="8"/>
+              <polyline points="3.5,5.5 1.5,8 3.5,10.5"/>
+              <line x1="9.5" y1="8" x2="14.5" y2="8"/>
+              <polyline points="12.5,5.5 14.5,8 12.5,10.5"/>
             </svg>
           ) : (
-            /* Narrow: inward arrows — viewing a single slice */
-            <svg className="w-3.5 h-3.5" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round">
-              <path d="M5 8h6M5 5l1.5 3L5 11M11 5l-1.5 3L11 11"/>
+            /* Narrow: arrows pointing inward toward center bar */
+            <svg className="w-3.5 h-3.5" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round">
+              <line x1="8" y1="2.5" x2="8" y2="13.5"/>
+              <line x1="1.5" y1="8" x2="6.5" y2="8"/>
+              <polyline points="4.5,5.5 6.5,8 4.5,10.5"/>
+              <line x1="9.5" y1="8" x2="14.5" y2="8"/>
+              <polyline points="11.5,5.5 9.5,8 11.5,10.5"/>
             </svg>
           )}
         </button>
