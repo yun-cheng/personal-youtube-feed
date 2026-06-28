@@ -96,22 +96,22 @@ export default function TimeSortControls({ variant = 'feed', window, onWindowCha
           className="flex-shrink-0 w-7 h-7 flex items-center justify-center rounded-full bg-[#1a1a1a] hover:bg-[#272727] transition-colors text-[#aaa] hover:text-white"
         >
           {timeMode === 'wide' ? (
-            /* Wide: arrows pointing outward from center bar */
+            /* Wide: arrows pointing outward from center bar, with gap */
             <svg className="w-3.5 h-3.5" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round">
               <line x1="8" y1="2.5" x2="8" y2="13.5"/>
-              <line x1="1.5" y1="8" x2="6.5" y2="8"/>
+              <line x1="1.5" y1="8" x2="5.5" y2="8"/>
               <polyline points="3.5,5.5 1.5,8 3.5,10.5"/>
-              <line x1="9.5" y1="8" x2="14.5" y2="8"/>
+              <line x1="10.5" y1="8" x2="14.5" y2="8"/>
               <polyline points="12.5,5.5 14.5,8 12.5,10.5"/>
             </svg>
           ) : (
-            /* Narrow: arrows pointing inward toward center bar */
+            /* Narrow: arrows pointing inward toward center bar, with gap */
             <svg className="w-3.5 h-3.5" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round">
               <line x1="8" y1="2.5" x2="8" y2="13.5"/>
-              <line x1="1.5" y1="8" x2="6.5" y2="8"/>
-              <polyline points="4.5,5.5 6.5,8 4.5,10.5"/>
-              <line x1="9.5" y1="8" x2="14.5" y2="8"/>
-              <polyline points="11.5,5.5 9.5,8 11.5,10.5"/>
+              <line x1="1.5" y1="8" x2="5.5" y2="8"/>
+              <polyline points="3.5,5.5 5.5,8 3.5,10.5"/>
+              <line x1="10.5" y1="8" x2="14.5" y2="8"/>
+              <polyline points="12.5,5.5 10.5,8 12.5,10.5"/>
             </svg>
           )}
         </button>
